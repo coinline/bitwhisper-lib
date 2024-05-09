@@ -1,11 +1,25 @@
+import { account } from './account.js';
+
+const FUNDING_ACCOUNT_INDEX = 0;
+const PROFILE_ACCOUNT_INDEX = 1;
 
 let credentials = {
     mnemonicPhrase: '',
     password: ''
 }
 
+let fundingAccount = null;
+let profileAccount = null;
+
 export function foo() {
     return 'bar 1';
+}
+
+
+function createAccount(rootHdPrivateKey, accountIndex) {
+    const path = `m/44'/0'/${accountIndex}'`;
+    const hdPrivateKey = rootHdPrivateKey.deriveChild(path);
+    return account(hdPrivateKey);
 }
 
 /**
@@ -36,14 +50,23 @@ export function init(mnemonicPhrase, password) {
     console.log(`rootHdPrivateKey: ${rootHdPrivateKey}`, rootHdPrivateKey);
 
     const accountPath = "m/44'/0'/0'";
-    const accountHdPrivateKey = rootHdPrivateKey.derive(accountPath);
+    const accountHdPrivateKey = rootHdPrivateKey.deriveChild(accountPath);
     console.log(`accountHdPrivateKey: ${accountHdPrivateKey}`, accountHdPrivateKey);
 
-    const firstExternalPrivateHdKey = accountHdPrivateKey.derive("m/0/0");
+    const firstExternalPrivateHdKey = accountHdPrivateKey.deriveChild("m/0/0");
     const firstExternalPrivateKey = firstExternalPrivateHdKey.privateKey;
 
     console.log(`firstExternalPrivateKey: ${firstExternalPrivateKey}`, firstExternalPrivateKey);
     const address = firstExternalPrivateKey.toAddress();
     console.log(`address: ${address}`, address);
+
+    fundingAccount = createAccount(rootHdPrivateKey, FUNDING_ACCOUNT_INDEX);
+    const fundingAddress0 = fundingAccount.getAddress(0);
+    console.log(`fundingAddress0: ${fundingAddress0}`);
+
+    profileAccount = createAccount(rootHdPrivateKey, PROFILE_ACCOUNT_INDEX);
+    const profileAddress0 = profileAccount.getAddress(0)
+    console.log(`profileAccount0: ${profileAddress0}`);
+
 }
 
