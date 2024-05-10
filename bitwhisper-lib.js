@@ -1,5 +1,7 @@
 import { account } from './account.js';
 
+const BIP44_COIN_TYPE_BSV = 236;
+
 const FUNDING_ACCOUNT_INDEX = 0;
 const PROFILE_ACCOUNT_INDEX = 1;
 
@@ -17,7 +19,7 @@ export function foo() {
 
 
 function createAccount(rootHdPrivateKey, accountIndex) {
-    const path = `m/44'/0'/${accountIndex}'`;
+    const path = `m/44'/${BIP44_COIN_TYPE_BSV}'/${accountIndex}'`;
     const hdPrivateKey = rootHdPrivateKey.deriveChild(path);
     return account(hdPrivateKey);
 }
